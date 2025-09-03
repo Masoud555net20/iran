@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>دستیار هوشمند خانواده من</title>
+
+    <!-- Persian Datepicker CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css"
+    />
+    <style>
+      /* استایل اختصاصی برای زیباسازی تقویم شمسی */
+      .datepicker-plot-area,
+      .datepicker-plot-area * {
+        font-family: "B yekan", "Vazirmatn", sans-serif !important;
+      }
+      .datepicker-plot-area {
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-radius: 1.2rem !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.13) !important;
+        border: 1px solid #e0e0e0 !important;
+        padding: 0.5rem 0.7rem !important;
+      }
+      .datepicker-plot-area .datepicker-day-view .table-days td {
+        border-radius: 0.7rem !important;
+        transition: background 0.2s;
+        font-size: 1.1rem;
+      }
+      .datepicker-plot-area .datepicker-day-view .table-days td.selected {
+        background: linear-gradient(90deg, #6725f4 0%, #66a6ff 100%) !important;
+        color: #fff !important;
+        font-weight: bold;
+        box-shadow: 0 2px 8px #6725f433;
+      }
+      .datepicker-plot-area .datepicker-day-view .table-days td:hover {
+        background: #f3e8ff !important;
+        color: #6725f4 !important;
+      }
+      .datepicker-plot-area .datepicker-header {
+        font-size: 1.2rem;
+        color: #6725f4;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+      .datepicker-plot-area .datepicker-day-view .table-days td.disabled {
+        color: #bbb !important;
+        background: none !important;
+      }
+      .datepicker-plot-area .datepicker-footer {
+        border-top: 1px solid #eee;
+        margin-top: 0.5rem;
+        padding-top: 0.3rem;
+      }
+    </style>
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- jQuery & Persian Datepicker JS -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <!-- B Homa Font & Fallback Font -->
+    <link
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <style>
+      /* Custom styles & Font Face */
+      @font-face {
+        font-family: "B yekan";
+        src: url("https://cdn.jsdelivr.net/gh/font-store/b-homa/BHoma.woff2")
+          format("woff2");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body,
+      html,
+      input,
+      select,
+      textarea,
+      button,
+      table,
+      th,
+      td,
+      label,
+      span,
+      div,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p,
+      ul,
+      ol,
+      li,
+      a,
+      strong,
+      b,
+      em,
+      .form-input,
+      .btn-primary,
+      .btn-secondary,
+      .card,
+      .datepicker-plot-area,
+      .datepicker-plot-area * {
+        font-family: "B yekan", "Vazirmatn", sans-serif !important;
+      }
+      body {
+        transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
+      }
+
+      /* --- THEME DEFINITIONS --- */
+
+      .card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+      }
+      .form-input {
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+      .form-input:focus {
+        box-shadow: 0 0 0 3px var(--tw-ring-color);
+      }
+      .family-item {
+        background: rgba(0, 0, 0, 0.05);
+      }
+      .transaction-item {
+        background-color: rgba(255, 255, 255, 0.6);
+      }
+      .btn-secondary {
+        background: rgba(0, 0, 0, 0.1);
+        color: inherit;
+      }
+      .btn-secondary.active-filter {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Theme Selector Modern Style */
+      /* Theme Selector Modern Style (updated) */
+      #theme-selector {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(88px, 1fr));
+        gap: 12px;
+        align-items: center;
+        justify-items: center;
+      }
+      #theme-selector .theme-item {
+        width: 100%;
+        max-width: 120px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.95),
+          rgba(250, 250, 250, 0.9)
+        );
+        border-radius: 14px;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 10px 30px rgba(16, 24, 40, 0.06);
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+      }
+      #theme-selector .theme-item:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 40px rgba(16, 24, 40, 0.12);
+      }
+      .theme-btn {
+        width: 64px;
+        height: 64px;
+        border-radius: 999px !important;
+        border: 4px solid rgba(255, 255, 255, 0.9) !important;
+        box-shadow: 0 8px 20px rgba(2, 6, 23, 0.12),
+          inset 0 -6px 12px rgba(255, 255, 255, 0.12);
+        transition: transform 0.18s ease, box-shadow 0.18s ease,
+          border 0.18s ease;
+        outline: none !important;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .theme-btn:before {
+        content: "";
+        position: absolute;
+        inset: -8px;
+        border-radius: 999px;
+        opacity: 0;
+        transition: opacity 0.18s ease, transform 0.18s ease;
+      }
+      .theme-btn:hover {
+        transform: scale(1.08);
+      }
+      .theme-btn.ring-4 {
+        transform: scale(1.12);
+      }
+      /* selected outline with subtle gradient */
+      .theme-btn.ring-4:before {
+        opacity: 1;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 122, 171, 0.25),
+          rgba(132, 94, 247, 0.25)
+        );
+        box-shadow: 0 6px 20px rgba(132, 94, 247, 0.18);
+        transform: scale(1);
+      }
+      #theme-selector .theme-item p,
+      #theme-selector .theme-item span {
+        font-family: "B Yekan", Tahoma, Arial, sans-serif !important;
+        font-size: 0.95rem !important;
+        font-weight: 600;
+        color: #2b2b2b;
+        margin: 0;
+      }
+      /* small caption style for compact screens */
+      @media (max-width: 640px) {
+        #theme-selector {
+          grid-template-columns: repeat(4, minmax(64px, 1fr));
+        }
+        .theme-btn {
+          width: 52px;
+          height: 52px;
+        }
+      }
+      /* 1. Theme: Default (Indigo/Blue) */
+      body.theme-default {
+        background: linear-gradient(135deg, #e3e9fc 0%, #c9e7fa 100%);
+        color: #212529;
+      }
+      .theme-default .btn-primary,
+      .theme-default .btn-secondary.active-filter {
+        background: linear-gradient(90deg, #6610f2 0%, #0d6efd 100%);
+        color: #fff;
+      }
+      .theme-default .btn-secondary {
+        color: #0d6efd;
+      }
+      .theme-default .header-text,
+      .theme-default .settings-modal-text {
+        color: #212529;
+        text-shadow: 1px 1px 2px #fff8;
+      }
+
+      /* 2. Theme: Pink */
+      body.theme-pink {
+        background: linear-gradient(135deg, #ffe0ef 0%, #f8d7fa 100%);
+        color: #6d214f;
+      }
+      .theme-pink .btn-primary,
+      .theme-pink .btn-secondary.active-filter {
+        background: linear-gradient(90deg, #e83e8c 0%, #d63384 100%);
+        color: #fff;
+      }
+      .theme-pink .btn-secondary {
+        color: #d63384;
+      }
+      .theme-pink .form-input {
+        background: #fff0f6;
+        border-color: #f8d7fa;
+      }
+      .theme-pink .header-text,
+      .theme-pink .settings-modal-text {
+        color: #6d214f;
+      }
+
+      /* 3. Theme: Green */
+      body.theme-green {
+        background: linear-gradient(135deg, #e6f4ea 0%, #d1f2eb 100%);
+        color: #155724;
+      }
+      .theme-green .btn-primary,
+      .theme-green .btn-secondary.active-filter {
+        background: linear-gradient(90deg, #198754 0%, #20c997 100%);
+        color: #fff;
+      }
+      .theme-green .btn-secondary {
+        color: #198754;
+      }
+      .theme-green .header-text,
+      .theme-green .settings-modal-text {
+        color: #155724;
+      }
+
+      /* 4. Theme: Red */
+      body.theme-red {
+        background: linear-gradient(135deg, #fde2e1 0%, #f8d7da 100%);
+        color: #842029;
+      }
+      .theme-red .btn-primary,
+      .theme-red .btn-secondary.active-filter {
+        background: linear-gradient(90deg, #dc3545 0%, #fd7e14 100%);
+        color: #fff;
+      }
+      .theme-red .btn-secondary {
+        color: #dc3545;
+      }
+      .theme-red .header-text,
+      .theme-red .settings-modal-text {
+        color: #842029;
+      }
+
+      /* 5. Theme: Dark Blue */
+      body.theme-dark-blue {
+        background: linear-gradient(135deg, #e3eafc 0%, #cfe2ff 100%);
+        color: #052c65;
+      }
+      .theme-dark-blue .btn-primary,
+      .theme-dark-blue .btn-secondary.active-filter {
+        background: linear-gradient(90deg, #0d6efd 0%, #6f42c1 100%);
+        color: #fff;
+      }
+      .theme-dark-blue .btn-secondary {
+        color: #0d6efd;
+      }
+      .theme-dark-blue .header-text,
+      .theme-dark-blue .settings-modal-text {
+        color: #052c65;
+      }
+
+      /* 6. Theme: Purple */
+      body.theme-purple {
+        background: linear-gradient(135deg, #f3e6ff 0%, #e0c3fc 100%);
+        color: #4b006e;
+      }
+      .theme-purple .btn-primary,
+      .theme-purple .btn-secondary.active-filter {
+        background: linear-gradient(90deg, #6f42c1 0%, #6610f2 100%);
+        color: #fff;
+      }
+      .theme-purple .btn-secondary {
+        color: #6f42c1;
+      }
+      .theme-purple .header-text,
+      .theme-purple .settings-modal-text {
+        color: #4b006e;
+      }
+      .theme-purple .card {
+        background: rgba(0, 0, 0, 0.2);
+      }
+      .theme-purple .btn-secondary {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+      }
+      body.theme-orange {
+        background: linear-gradient(135deg, #fdc830, #f37335);
+        color: #4e342e;
+      }
+      .theme-orange .btn-primary,
+      .theme-orange .btn-secondary.active-filter {
+        background: linear-gradient(to right, #e65c00, #f9d423);
+      }
+      .theme-orange .header-text,
+      .theme-orange .settings-modal-text {
+        color: #fff;
+      }
+      body.theme-yellow {
+        background: linear-gradient(135deg, #fffde4, #ffd62a);
+        color: #424242;
+      }
+      .theme-yellow .btn-primary,
+      .theme-yellow .btn-secondary.active-filter {
+        background: linear-gradient(to right, #f7971e, #ffd200);
+      }
+      .theme-yellow .header-text,
+      .theme-yellow .settings-modal-text {
+        color: #4a4a4a;
+      }
+      body.theme-light-blue {
+        background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+        color: #014a69;
+      }
+      .theme-light-blue .btn-primary,
+      .theme-light-blue .btn-secondary.active-filter {
+        background: linear-gradient(to right, #ff3700, #f0062d);
+      }
+      .theme-light-blue .header-text,
+      .theme-light-blue .settings-modal-text {
+        color: #fff;
+      }
+      body.theme-black {
+        background: linear-gradient(135deg, #232526, #414345);
+        color: #e5e7eb;
+      }
+      .theme-black .card {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .theme-black .btn-primary,
+      .theme-black .btn-secondary.active-filter {
+        background: linear-gradient(to right, #8e9eab, #eef2f3);
+        color: #232526;
+      }
+      .theme-black .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #e5e7eb;
+      }
+      .theme-black .header-text,
+      .theme-black .settings-modal-text {
+        color: #fff;
+      }
+      .theme-black .family-item,
+      .theme-black .transaction-item {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      body.theme-gray {
+        background: linear-gradient(135deg, #e4e5e6, #a8abaf);
+        color: #373a3c;
+      }
+      .theme-gray .btn-primary,
+      .theme-gray .btn-secondary.active-filter {
+        background: linear-gradient(to right, #343a40, #595c5d);
+      }
+      .theme-gray .header-text,
+      .theme-gray .settings-modal-text {
+        color: #292b2c;
+      }
+
+      /* --- SHARED & AI STYLES --- */
+      .card {
+        border-radius: 1.5rem;
+        padding: 1.75rem;
+        transition: all 0.5s ease;
+      }
+      .btn-primary,
+      .btn-secondary {
+        border: none;
+        transition: all 0.22s cubic-bezier(0.2, 0.9, 0.2, 1);
+        box-shadow: 0 8px 22px rgba(16, 24, 40, 0.08);
+        color: white;
+        font-weight: 700;
+        border-radius: 0.9rem;
+      }
+      .btn-primary:hover,
+      .btn-secondary:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow: 0 20px 40px rgba(16, 24, 40, 0.12);
+      }
+      .btn-primary:active,
+      .btn-secondary:active {
+        transform: translateY(-1px) scale(0.995);
+      }
+      .form-input {
+        border-radius: 0.8rem;
+        width: 100%;
+        transition: all 0.18s ease;
+        padding: 0.75rem 0.9rem;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 20px;
+      }
+      .theme-black .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .family-item,
+      .transaction-item {
+        transition: all 0.3s ease;
+      }
+
+      .spinner {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: 8px solid;
+        border-color: #dbdcef;
+        border-right-color: #4f46e5;
+        animation: spinner-d3wgkg 1s infinite linear;
+      }
+      @keyframes spinner-d3wgkg {
+        to {
+          transform: rotate(1turn);
+        }
+      }
+      #ai-result ul {
+        list-style-type: disc;
+        padding-right: 2rem;
+        margin-top: 1rem;
+      }
+      #ai-result li {
+        margin-bottom: 0.5rem;
+      }
+      #ai-result p {
+        margin-bottom: 1rem;
+      }
+
+      /* Print Styles */
+      @media print {
+        body,
+        html {
+          background: #fff !important;
+          color: #222 !important;
+          font-family: "B yekan", Tahoma, sans-serif !important;
+        }
+        .no-print,
+        .btn-primary,
+        .btn-secondary,
+        .form-input,
+        .filter-btn,
+        #ai-modal,
+        #settings-modal,
+        #total-filtered-amount-box,
+        .custom-scrollbar,
+        .transaction-item button,
+        #transaction-form,
+        #family-form,
+        #theme-selector,
+        #ai-analysis-btn,
+        #print-btn {
+          display: none !important;
+        }
+        .card,
+        .print-container {
+          box-shadow: none !important;
+          border: 1.5px solid #bbb !important;
+          background: #fff !important;
+          color: #222 !important;
+        }
+        .print-header {
+          display: block !important;
+          text-align: center;
+          margin-bottom: 1.5rem;
+        }
+        .print-header h1 {
+          font-size: 2.2rem !important;
+          color: #6725f4 !important;
+          font-weight: bold;
+          margin-bottom: 0.5rem;
+          letter-spacing: 1px;
+        }
+        .print-header p {
+          font-size: 1.1rem;
+          color: #444;
+        }
+        .print-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 1.5rem;
+          font-size: 1.1rem;
+        }
+        .print-table th,
+        .print-table td {
+          border: 1px solid #bbb;
+          padding: 10px 8px;
+          text-align: right;
+        }
+        .print-table th {
+          background: linear-gradient(90deg, #6725f4 0%, #66a6ff 100%);
+          color: #fff;
+          font-size: 1.1rem;
+        }
+        .print-table tr:nth-child(even) td {
+          background: #f7f7fa;
+        }
+        #print-summary {
+          margin-top: 1.5rem;
+          margin-bottom: 1.5rem;
+          padding: 1rem 0.5rem;
+          background: #f3e8ff;
+          border-radius: 1rem;
+          font-size: 1.2rem;
+          color: #6725f4;
+          font-weight: bold;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <!-- Settings Button -->
+    <button
+      id="settings-btn"
+      class="no-print fixed top-4 left-4 z-50 btn-primary rounded-full w-12 h-12 flex items-center justify-center text-xl shadow-lg"
+    >
+      <i class="fas fa-cog fa-spin"></i>
+    </button>
+
+    <!-- Settings Modal -->
+    <div
+      id="settings-modal"
+      class="hidden no-print fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40"
+    >
+      <div class="card w-11/12 max-w-lg">
+        <h2
+          class="text-2xl font-bold mb-6 text-center settings-modal-text flex items-center justify-center gap-2"
+        >
+          🎨 تم را انتخاب کنید
+        </h2>
+        <div
+          id="theme-selector"
+          class="grid grid-cols-3 sm:grid-cols-4 gap-x-4 gap-y-6 justify-items-center"
+        ></div>
+      </div>
+    </div>
+
+    <!-- AI Analysis Modal -->
+    <div
+      id="ai-modal"
+      class="hidden no-print fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-40"
+    >
+      <div class="card w-11/12 max-w-2xl relative">
+        <button
+          id="ai-modal-close"
+          class="absolute top-4 left-4 text-2xl opacity-70 hover:opacity-100 transition"
+        >
+          &times;
+        </button>
+        <h2
+          class="text-2xl font-bold mb-6 text-center flex items-center justify-center gap-3"
+        >
+          <i class="fas fa-brain text-yellow-400"></i>تحلیل هوشمند هزینه‌ها
+        </h2>
+        <div id="ai-spinner" class="flex justify-center items-center h-48">
+          <div class="spinner"></div>
+        </div>
+        <div
+          id="ai-result"
+          class="hidden max-h-[60vh] overflow-y-auto custom-scrollbar pr-4"
+        ></div>
+      </div>
+    </div>
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+      <header class="text-center mb-12 no-print">
+        <h1 class="text-4xl md:text-5xl font-bold tracking-wide header-text">
+          دستیار هوشمند خانواده من 🌟
+        </h1>
+        <p class="text-lg mt-3 header-text opacity-80">
+          مدیریت هزینه‌ها، خریدها و اعضای خانواده در یک مکان
+        </p>
+      </header>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-1 flex flex-col gap-8 no-print">
+          <div class="card">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+              <i class="fas fa-users ml-3 text-violet-400"></i>اعضای خانواده
+            </h2>
+            <form id="family-form" class="flex gap-2 mb-4">
+              <input
+                type="text"
+                id="member-name"
+                placeholder="نام عضو جدید"
+                class="form-input"
+                required
+              />
+              <button type="submit" class="btn-primary rounded-lg px-4">
+                <i class="fas fa-plus"></i>
+              </button>
+            </form>
+            <div
+              id="family-list"
+              class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar"
+            ></div>
+          </div>
+          <div class="card">
+            <h2 class="text-2xl font-bold mb-4 flex items-center">
+              <i class="fas fa-money-bill-wave ml-3 text-teal-400"></i>ثبت
+              تراکنش جدید
+            </h2>
+            <form id="transaction-form" class="space-y-4">
+              <input
+                type="text"
+                id="trans-desc"
+                placeholder="شرح (مثلا: شیر یا قبض برق)"
+                class="form-input"
+                required
+              />
+              <input
+                type="number"
+                id="trans-amount"
+                placeholder="مبلغ (تومان)"
+                class="form-input"
+                required
+              />
+              <select id="trans-member" class="form-input" required>
+                <option value="" disabled selected>انتخاب عضو خانواده</option>
+              </select>
+              <div class="flex gap-4">
+                <button
+                  type="submit"
+                  data-type="shopping"
+                  class="btn-primary w-full"
+                >
+                  🛒 ثبت خرید
+                </button>
+                <button
+                  type="submit"
+                  data-type="expense"
+                  class="btn-primary w-full"
+                >
+                  🧾 ثبت هزینه
+                </button>
+              </div>
+              <!-- جمع کل مبلغ تراکنش‌های فیلترشده -->
+              <div id="total-filtered-amount-box" class="mt-4 text-center">
+                <span
+                  class="inline-block bg-gradient-to-r from-violet-500 to-blue-400 text-white rounded-xl px-4 py-2 shadow font-bold text-lg"
+                  style="font-family: 'B Homa', Vazirmatn, sans-serif"
+                >
+                  جمع کل تراکنش‌های این بازه:
+                  <span id="total-filtered-amount">۰</span> تومان
+                </span>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 flex flex-col gap-8 print-container">
+          <div class="card">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-center mb-4"
+            >
+              <h2 class="text-2xl font-bold mb-4 sm:mb-0 flex items-center">
+                <i class="fas fa-filter ml-3 text-amber-400"></i>گزارش‌ها و
+                فیلترها
+              </h2>
+              <button
+                id="ai-analysis-btn"
+                class="btn-primary px-4 py-2 text-sm"
+              >
+                <i class="fas fa-brain ml-2"></i>تحلیل هوشمند
+              </button>
+            </div>
+
+            <!-- Filters Section with Standard Browser Date Picker -->
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end border-t border-gray-600/20 pt-4 no-print"
+            >
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >فیلتر بر اساس عضو</label
+                  >
+                  <select id="member-filter" class="form-input"></select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >فیلتر تاریخ سفارشی</label
+                  >
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="text"
+                      id="start-date-filter"
+                      class="form-input text-center"
+                      placeholder="تاریخ شروع"
+                    />
+                    <span>تا</span>
+                    <input
+                      type="text"
+                      id="end-date-filter"
+                      class="form-input text-center"
+                      placeholder="تاریخ پایان"
+                    />
+                  </div>
+
+                  <!-- دکمه بزرگ و افکت‌دار زیر فیلدها -->
+                  <div class="mt-4">
+                    <button
+                      id="filter-by-date-btn"
+                      class="w-full md:w-80 mx-auto block py-4 px-6 text-lg font-bold rounded-2xl text-white bg-gradient-to-r from-pink-500 to-violet-600 shadow-xl hover:shadow-2xl transform transition-all duration-200 hover:-translate-y-1 active:scale-95 focus:outline-none"
+                    >
+                      نمایش گزارش بازه
+                    </button>
+                    <div
+                      id="date-error"
+                      class="hidden mt-3 text-center text-red-600 bg-red-50 border border-red-100 p-2 rounded-lg"
+                    >
+                      فرمت تاریخ معتبر نیست. از قالب YYYY/MM/DD استفاده کنید
+                      (مثال: 1404/06/10).
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <p class="text-sm font-medium text-center md:text-right">
+                  یا انتخاب دوره:
+                </p>
+                <div class="flex flex-wrap gap-2 justify-center md:justify-end">
+                  <button
+                    class="filter-btn btn-secondary px-3 py-1 text-sm"
+                    data-period="all"
+                  >
+                    همه
+                  </button>
+                  <button
+                    class="filter-btn btn-secondary px-3 py-1 text-sm"
+                    data-period="daily"
+                  >
+                    امروز
+                  </button>
+                  <button
+                    class="filter-btn btn-secondary px-3 py-1 text-sm"
+                    data-period="weekly"
+                  >
+                    این هفته
+                  </button>
+                  <button
+                    class="filter-btn btn-secondary px-3 py-1 text-sm"
+                    data-period="monthly"
+                  >
+                    این ماه
+                  </button>
+                  <button
+                    id="print-btn"
+                    class="btn-secondary px-3 py-1 text-sm"
+                  >
+                    <i class="fas fa-print ml-2"></i>چاپ
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="border-t border-gray-600/20 mt-4 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-center"
+            >
+              <div class="bg-black bg-opacity-10 p-4 rounded-xl">
+                <p class="text-lg">🛒 جمع خریدها</p>
+                <p id="total-shopping-cost" class="text-2xl font-bold">
+                  0 تومان
+                </p>
+              </div>
+              <div class="bg-black bg-opacity-10 p-4 rounded-xl">
+                <p class="text-lg">💸 جمع هزینه‌ها</p>
+                <p id="total-expense-cost" class="text-2xl font-bold">
+                  0 تومان
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="print-header hidden">
+              <h1 class="text-center font-bold mb-4">گزارش مالی خانواده</h1>
+              <p>تاریخ گزارش: <span id="report-date"></span></p>
+              <div id="print-summary"></div>
+            </div>
+            <h2 class="text-2xl font-bold mb-4 no-print">آخرین تراکنش‌ها 📊</h2>
+            <div
+              id="transaction-list"
+              class="space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar"
+            ></div>
+            <table class="print-table hidden">
+              <thead>
+                <tr>
+                  <th>شرح</th>
+                  <th>مبلغ (تومان)</th>
+                  <th>نوع</th>
+                  <th>عضو خانواده</th>
+                  <th>تاریخ</th>
+                </tr>
+              </thead>
+              <tbody id="print-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- Persian Datepicker ---
+        function toGregorian(dateStr) {
+          // dateStr: yyyy/MM/dd
+          try {
+            if (!dateStr) return null;
+            // Normalize Persian/Arabic digits to ASCII digits
+            const normalizeDigits = (s) => {
+              if (!s || typeof s !== "string") return s;
+              const persianNumbers = "۰۱۲۳۴۵۶۷۸۹".split("");
+              const arabicNumbers = "٠١٢٣٤٥٦٧٨٩".split("");
+              let out = "";
+              for (let ch of s) {
+                const pIndex = persianNumbers.indexOf(ch);
+                if (pIndex !== -1) {
+                  out += String(pIndex);
+                  continue;
+                }
+                const aIndex = arabicNumbers.indexOf(ch);
+                if (aIndex !== -1) {
+                  out += String(aIndex);
+                  continue;
+                }
+                out += ch;
+              }
+              return out;
+            };
+
+            // allow -, / or . as separator and remove spaces
+            let cleaned = normalizeDigits(dateStr).trim();
+            cleaned = cleaned.replace(/\s+/g, "");
+            cleaned = cleaned.replace(/[.\-]/g, "/");
+            const p = cleaned.split("/");
+            if (p.length !== 3) return null;
+            const y = parseInt(p[0], 10);
+            const m = parseInt(p[1], 10);
+            const d = parseInt(p[2], 10);
+            if (Number.isNaN(y) || Number.isNaN(m) || Number.isNaN(d))
+              return null;
+            const pd = new persianDate([y, m, d]);
+            // prefer toDate() if available (returns JS Date), otherwise try toGregorian()
+            if (pd && typeof pd.toDate === "function") {
+              return pd.toDate();
+            }
+            if (pd && typeof pd.toGregorian === "function") {
+              const g = pd.toGregorian();
+              return new Date(g.year, g.month - 1, g.day);
+            }
+            // If neither method exists, fall through to null (will be handled by caller)
+            console.warn(
+              "persianDate instance has no toDate/toGregorian methods",
+              pd
+            );
+            return null;
+          } catch (e) {
+            console.warn("toGregorian failed:", e, dateStr);
+            return null;
+          }
+        }
+        $(function () {
+          // مقدار پیش‌فرض امروز برای هر دو فیلد
+          var today = new persianDate().format("YYYY/MM/DD");
+          // Use jQuery setters here to avoid referencing DOM vars before they are created
+          $("#start-date-filter").val(today);
+          $("#end-date-filter").val(today);
+
+          $("#start-date-filter").persianDatepicker({
+            initialValue: true,
+            autoClose: true,
+            format: "YYYY/MM/DD",
+            toolbox: { calendarSwitch: { enabled: false } },
+            calendar: { persian: { locale: "fa" } },
+            onSelect: function (unix) {
+              const val = $("#start-date-filter").val();
+              // update actual input value (the DOM input exists later in code)
+              $("#start-date-filter").val(val);
+              // trigger a change so handlers added later can react
+              $("#start-date-filter").trigger("change");
+            },
+          });
+          $("#end-date-filter").persianDatepicker({
+            initialValue: true,
+            autoClose: true,
+            format: "YYYY/MM/DD",
+            toolbox: { calendarSwitch: { enabled: false } },
+            calendar: { persian: { locale: "fa" } },
+            onSelect: function (unix) {
+              const val = $("#end-date-filter").val();
+              $("#end-date-filter").val(val);
+              $("#end-date-filter").trigger("change");
+            },
+          });
+        });
+        // --- DOM ELEMENT SELECTIONS ---
+        const familyForm = document.getElementById("family-form");
+        const transactionForm = document.getElementById("transaction-form");
+        const familyListContainer = document.getElementById("family-list");
+        const transactionListContainer =
+          document.getElementById("transaction-list");
+        const memberDropdown = document.getElementById("trans-member");
+        const totalShoppingEl = document.getElementById("total-shopping-cost");
+        const totalExpenseEl = document.getElementById("total-expense-cost");
+        const filterButtons = document.querySelectorAll(".filter-btn");
+        const printBtn = document.getElementById("print-btn");
+        const printTableBody = document.getElementById("print-table-body");
+        const settingsBtn = document.getElementById("settings-btn");
+        const settingsModal = document.getElementById("settings-modal");
+        const themeSelector = document.getElementById("theme-selector");
+        const aiAnalysisBtn = document.getElementById("ai-analysis-btn");
+        const aiModal = document.getElementById("ai-modal");
+        const aiModalClose = document.getElementById("ai-modal-close");
+        const aiSpinner = document.getElementById("ai-spinner");
+        const aiResult = document.getElementById("ai-result");
+        const memberFilterDropdown = document.getElementById("member-filter");
+        const startDateInput = document.getElementById("start-date-filter");
+        const endDateInput = document.getElementById("end-date-filter");
+
+        // --- APP DATA & STATE ---
+        let familyMembers = JSON.parse(
+          localStorage.getItem("familyMembers")
+        ) || ["مسعود", "مریم"];
+        let transactions =
+          JSON.parse(localStorage.getItem("transactions")) || [];
+        let currentFilter = "all";
+        let selectedMemberFilter = "all";
+        let startDateFilterValue = null;
+        let endDateFilterValue = null;
+
+        const themes = [
+          {
+            id: "theme-default",
+            name: "آبی مدرن",
+            color: "linear-gradient(90deg,#5b8def,#6ad0ff)",
+          },
+          {
+            id: "theme-pink",
+            name: "صورتی ملایم",
+            color: "linear-gradient(90deg,#ff7ab6,#ff6a95)",
+          },
+          {
+            id: "theme-green",
+            name: "سبز نعناعی",
+            color: "linear-gradient(90deg,#57e6a3,#3dd1b7)",
+          },
+          {
+            id: "theme-red",
+            name: "قلمی نارنجی",
+            color: "linear-gradient(90deg,#ff7a59,#ffb86b)",
+          },
+          {
+            id: "theme-dark-blue",
+            name: "آبی عمق",
+            color: "linear-gradient(90deg,#283e78,#4b6cb7)",
+          },
+          {
+            id: "theme-purple",
+            name: "بنفش لوکس",
+            color: "linear-gradient(90deg,#8b5cf6,#c084fc)",
+          },
+          {
+            id: "theme-orange",
+            name: "نارنجی گرم",
+            color: "linear-gradient(90deg,#ff9a6b,#ff6a3d)",
+          },
+          {
+            id: "theme-yellow",
+            name: "طلایی",
+            color: "linear-gradient(90deg,#ffd166,#ffb84d)",
+          },
+          {
+            id: "theme-light-blue",
+            name: "آبی روشن",
+            color: "linear-gradient(90deg,#67e8f9,#22d3ee)",
+          },
+          {
+            id: "theme-black",
+            name: "شب",
+            color: "linear-gradient(90deg,#2b2d42,#121217)",
+          },
+          {
+            id: "theme-gray",
+            name: "خاکستری",
+            color: "linear-gradient(90deg,#e6e9ef,#cfd6e6)",
+          },
+        ];
+
+        // --- HELPER FUNCTIONS ---
+        const saveData = () => {
+          localStorage.setItem("familyMembers", JSON.stringify(familyMembers));
+          localStorage.setItem("transactions", JSON.stringify(transactions));
+        };
+        const formatNumber = (num) =>
+          new Intl.NumberFormat("fa-IR").format(num);
+        const formatDate = (timestamp) =>
+          new Date(timestamp).toLocaleDateString("fa-IR", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          });
+
+        // --- THEME SWITCHER LOGIC ---
+        const buildThemeSelector = () => {
+          themes.forEach((theme) => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "theme-item";
+            wrapper.innerHTML = `
+              <button class="theme-btn" data-theme="${theme.id}" title="${theme.name}" aria-label="انتخاب تم ${theme.name}" style="background: ${theme.color};"></button>
+              <p>${theme.name}</p>
+            `;
+            themeSelector.appendChild(wrapper);
+          });
+          // delegate click events
+          themeSelector.addEventListener("click", (e) => {
+            const btn = e.target.closest(".theme-btn");
+            if (btn) applyTheme(btn.dataset.theme);
+          });
+        };
+        const applyTheme = (themeName) => {
+          document.body.className = "antialiased";
+          document.body.classList.add(themeName);
+          localStorage.setItem("appTheme", themeName);
+          document.querySelectorAll(".theme-btn").forEach((btn) => {
+            const isActive = btn.dataset.theme === themeName;
+            btn.classList.toggle("ring-4", isActive);
+            btn.classList.toggle("ring-yellow-400", isActive);
+            btn.classList.toggle("ring-offset-4", isActive);
+            btn.classList.toggle("ring-offset-gray-100", isActive);
+            if (themeName === "theme-black" || themeName === "theme-purple") {
+              btn.classList.replace(
+                "ring-offset-gray-100",
+                "ring-offset-gray-800"
+              );
+            }
+          });
+        };
+        const loadTheme = () => {
+          const savedTheme =
+            localStorage.getItem("appTheme") || "theme-default";
+          applyTheme(savedTheme);
+        };
+
+        // --- GEMINI API CALL LOGIC ---
+        async function callGeminiApi(userPrompt, systemPrompt) {
+          const apiKey = "AIzaSyB3Ip9fkDpNJusr10-ov3NGytoZeMsa0W8";
+          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+          const payload = {
+            contents: [{ parts: [{ text: userPrompt }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+          };
+          let attempts = 0;
+          while (attempts < 5) {
+            try {
+              const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+              });
+              if (!response.ok)
+                throw new Error(`HTTP error! status: ${response.status}`);
+              const result = await response.json();
+              if (result.candidates?.[0]?.content?.parts?.[0]?.text)
+                return result.candidates[0].content.parts[0].text;
+              else return "<p>متاسفانه پاسخی از هوش مصنوعی دریافت نشد.</p>";
+            } catch (error) {
+              console.error("Gemini API call failed:", error);
+              attempts++;
+              if (attempts >= 5)
+                return "<p>خطا در ارتباط با سرور هوش مصنوعی.</p>";
+              await new Promise((res) =>
+                setTimeout(res, Math.pow(2, attempts) * 1000)
+              );
+            }
+          }
+        }
+
+        // --- RENDER FUNCTIONS ---
+        const renderFamilyList = () => {
+          familyListContainer.innerHTML = "";
+          familyMembers.forEach((member) => {
+            const memberEl = document.createElement("div");
+            memberEl.className =
+              "family-item flex justify-between items-center p-2 rounded-lg";
+            memberEl.innerHTML = `<span>${member}</span><button class="delete-member-btn text-rose-500 hover:text-rose-400" data-member="${member}"><i class="fas fa-times-circle"></i></button>`;
+            familyListContainer.appendChild(memberEl);
+          });
+        };
+
+        const populateMemberDropdown = (dropdown) => {
+          const isFilterDropdown = dropdown.id === "member-filter";
+          dropdown.innerHTML = isFilterDropdown
+            ? '<option value="all">همه اعضا</option>'
+            : '<option value="" disabled selected>انتخاب عضو خانواده</option>';
+          familyMembers.forEach((member) => {
+            const option = document.createElement("option");
+            option.value = member;
+            option.textContent = member;
+            dropdown.appendChild(option);
+          });
+          if (isFilterDropdown) dropdown.value = selectedMemberFilter;
+        };
+
+        const renderTransactions = () => {
+          const filteredTransactions = getFilteredTransactions();
+          transactionListContainer.innerHTML = "";
+          printTableBody.innerHTML = "";
+          if (filteredTransactions.length === 0) {
+            transactionListContainer.innerHTML = `<p class="opacity-70 text-center p-8">تراکنشی برای نمایش وجود ندارد.</p>`;
+            return;
+          }
+          filteredTransactions.sort((a, b) => b.id - a.id);
+          filteredTransactions.forEach((trans) => {
+            const isShopping = trans.type === "shopping";
+            const icon = isShopping ? "fa-shopping-cart" : "fa-receipt";
+            const colorClass = isShopping
+              ? "border-sky-400"
+              : "border-emerald-400";
+            const transEl = document.createElement("div");
+            transEl.className = `transaction-item flex items-center justify-between p-4 rounded-xl border-r-4 ${colorClass} hover:shadow-lg transition-shadow`;
+            transEl.innerHTML = `<div class="flex items-center gap-4"><i class="fas ${icon} text-2xl opacity-80"></i><div><p class="font-bold text-lg">${
+              trans.desc
+            }</p><p class="text-sm opacity-70">${trans.member} • ${formatDate(
+              trans.id
+            )}</p></div></div><div class="text-left"><p class="font-bold text-lg">${formatNumber(
+              trans.amount
+            )} تومان</p><button class="delete-trans-btn text-rose-500 hover:text-rose-400 text-xs" data-id="${
+              trans.id
+            }"><i class="fas fa-trash-alt mr-1"></i>حذف</button></div>`;
+            transactionListContainer.appendChild(transEl);
+            const printRow = document.createElement("tr");
+            printRow.innerHTML = `<td>${trans.desc}</td><td>${formatNumber(
+              trans.amount
+            )}</td><td>${isShopping ? "خرید" : "هزینه"}</td><td>${
+              trans.member
+            }</td><td>${formatDate(trans.id)}</td>`;
+            printTableBody.appendChild(printRow);
+          });
+        };
+
+        const updateSummary = () => {
+          const filtered = getFilteredTransactions();
+          const shoppingTotal = filtered
+            .filter((t) => t.type === "shopping")
+            .reduce((sum, t) => sum + t.amount, 0);
+          const expenseTotal = filtered
+            .filter((t) => t.type === "expense")
+            .reduce((sum, t) => sum + t.amount, 0);
+          totalShoppingEl.textContent = `${formatNumber(shoppingTotal)} تومان`;
+          totalExpenseEl.textContent = `${formatNumber(expenseTotal)} تومان`;
+          // جمع کل مبلغ تراکنش‌های فیلترشده (خرید + هزینه)
+          const totalFiltered = filtered.reduce((sum, t) => sum + t.amount, 0);
+          const totalFilteredEl = document.getElementById(
+            "total-filtered-amount"
+          );
+          if (totalFilteredEl)
+            totalFilteredEl.textContent = formatNumber(totalFiltered);
+        };
+
+        const getFilteredTransactions = () => {
+          let filtered = [...transactions];
+          // Custom Date Range Filter
+          if (startDateFilterValue && endDateFilterValue) {
+            const startTime = startDateFilterValue.getTime();
+            const endTime = endDateFilterValue.getTime();
+            filtered = filtered.filter((t) => {
+              const transactionDate = new Date(t.id);
+              return transactionDate >= startTime && transactionDate <= endTime;
+            });
+          } else {
+            // Period Filter
+            const now = new Date();
+            const todayStart = new Date(
+              now.getFullYear(),
+              now.getMonth(),
+              now.getDate()
+            );
+            const dayOfWeek = (now.getDay() + 1) % 7; // Saturday as 0
+            const weekStart = new Date(
+              now.getFullYear(),
+              now.getMonth(),
+              now.getDate() - dayOfWeek
+            );
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+            switch (currentFilter) {
+              case "daily":
+                filtered = filtered.filter((t) => t.id >= todayStart.getTime());
+                break;
+              case "weekly":
+                filtered = filtered.filter((t) => t.id >= weekStart.getTime());
+                break;
+              case "monthly":
+                filtered = filtered.filter((t) => t.id >= monthStart.getTime());
+                break;
+            }
+          }
+          // Member Filter (applies to both date range and period)
+          if (selectedMemberFilter !== "all") {
+            filtered = filtered.filter(
+              (t) => t.member === selectedMemberFilter
+            );
+          }
+          return filtered;
+        };
+
+        const renderAll = () => {
+          renderFamilyList();
+          populateMemberDropdown(memberDropdown);
+          populateMemberDropdown(memberFilterDropdown);
+          renderTransactions();
+          updateSummary();
+        };
+
+        // --- EVENT HANDLERS & INITIALIZATION ---
+        familyForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const nameInput = document.getElementById("member-name");
+          const newMember = nameInput.value.trim();
+          if (newMember && !familyMembers.includes(newMember)) {
+            familyMembers.push(newMember);
+            nameInput.value = "";
+            renderAll();
+            saveData();
+          }
+        });
+        familyListContainer.addEventListener("click", (e) => {
+          if (e.target.closest(".delete-member-btn")) {
+            const memberToDelete =
+              e.target.closest(".delete-member-btn").dataset.member;
+            familyMembers = familyMembers.filter((m) => m !== memberToDelete);
+            renderAll();
+            saveData();
+          }
+        });
+        transactionForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const type = e.submitter.dataset.type;
+          const desc = document.getElementById("trans-desc").value;
+          const amount = parseInt(
+            document.getElementById("trans-amount").value,
+            10
+          );
+          const member = memberDropdown.value;
+          if (desc && amount > 0 && member && type) {
+            transactions.push({ id: Date.now(), desc, amount, member, type });
+            transactionForm.reset();
+            renderAll();
+            saveData();
+          }
+        });
+        transactionListContainer.addEventListener("click", (e) => {
+          const deleteBtn = e.target.closest(".delete-trans-btn");
+          if (deleteBtn) {
+            const transId = parseInt(deleteBtn.dataset.id, 10);
+            transactions = transactions.filter((t) => t.id !== transId);
+            renderAll();
+            saveData();
+          }
+        });
+        printBtn.addEventListener("click", () => {
+          document.getElementById("report-date").textContent =
+            new Date().toLocaleDateString("fa-IR", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+          // جمع کل خرید و هزینه برای چاپ
+          const filtered = getFilteredTransactions();
+          const shoppingTotal = filtered
+            .filter((t) => t.type === "shopping")
+            .reduce((sum, t) => sum + t.amount, 0);
+          const expenseTotal = filtered
+            .filter((t) => t.type === "expense")
+            .reduce((sum, t) => sum + t.amount, 0);
+          const allTotal = filtered.reduce((sum, t) => sum + t.amount, 0);
+          // خلاصه خرید و هزینه هر عضو
+          let memberSummary = "";
+          if (filtered.length > 0) {
+            const byMember = {};
+            filtered.forEach((t) => {
+              if (!byMember[t.member]) byMember[t.member] = [];
+              byMember[t.member].push(t);
+            });
+            memberSummary =
+              '<div style="margin-top:1rem;text-align:right;font-size:1.1rem">';
+            Object.keys(byMember).forEach((member) => {
+              const items = byMember[member]
+                .map(
+                  (t) =>
+                    `${t.type === "shopping" ? "🛒" : "💸"} <b>${
+                      t.desc
+                    }</b> (${formatNumber(t.amount)} تومان)`
+                )
+                .join("، ");
+              memberSummary += `<div><b>${member}:</b> ${items}</div>`;
+            });
+            memberSummary += "</div>";
+          }
+          document.getElementById("print-summary").innerHTML =
+            `<span>جمع کل خریدها: <b>${formatNumber(
+              shoppingTotal
+            )}</b> تومان</span> &nbsp; | &nbsp; <span>جمع کل هزینه‌ها: <b>${formatNumber(
+              expenseTotal
+            )}</b> تومان</span> &nbsp; | &nbsp; <span>جمع کل تراکنش‌ها: <b>${formatNumber(
+              allTotal
+            )}</b> تومان</span>` + memberSummary;
+          window.print();
+        });
+        settingsBtn.addEventListener("click", () =>
+          settingsModal.classList.toggle("hidden")
+        );
+        settingsModal.addEventListener("click", (e) => {
+          if (e.target === settingsModal) {
+            settingsModal.classList.add("hidden");
+          }
+        });
+        themeSelector.addEventListener("click", (e) => {
+          const themeBtn = e.target.closest(".theme-btn");
+          if (themeBtn) {
+            applyTheme(themeBtn.dataset.theme);
+          }
+        });
+        aiAnalysisBtn.addEventListener("click", async () => {
+          aiModal.classList.remove("hidden");
+          aiSpinner.classList.remove("hidden");
+          aiResult.classList.add("hidden");
+          aiResult.innerHTML = "";
+          const data = getFilteredTransactions();
+          if (data.length === 0) {
+            aiSpinner.classList.add("hidden");
+            aiResult.innerHTML = "<p>تراکنشی برای تحلیل وجود ندارد.</p>";
+            aiResult.classList.remove("hidden");
+            return;
+          }
+          const dataSummary = data
+            .map(
+              (t) =>
+                `${t.type === "shopping" ? "خرید" : "هزینه"}: ${
+                  t.desc
+                }, مبلغ: ${t.amount} تومان, توسط: ${t.member}`
+            )
+            .join("\n");
+          const systemPrompt =
+            "شما یک مشاور مالی خانواده به نام «دستیار هوشمند» هستید. وظیفه شما تحلیل داده‌های مالی ارسالی کاربر به زبان فارسی است. پاسخ شما باید کاملاً به زبان فارسی، دوستانه و دلگرم‌کننده باشد. در پاسخ خود، ابتدا یک خلاصه‌ی کلی از وضعیت مالی ارائه دهید. سپس، بزرگترین دسته‌های هزینه را مشخص کنید. در نهایت، ۲ یا ۳ راهکار عملی و ساده برای صرفه‌جویی بر اساس همین داده‌ها پیشنهاد دهید. پاسخ شما باید در قالب HTML ساده با تگ‌های <p>, <strong>, <ul>, <li> باشد.";
+          const userPrompt = `سلام دستیار هوشمند. لطفاً این گزارش مالی را برای من تحلیل کن:\n\n${dataSummary}`;
+          const response = await callGeminiApi(userPrompt, systemPrompt);
+          aiSpinner.classList.add("hidden");
+          aiResult.innerHTML = response;
+          aiResult.classList.remove("hidden");
+        });
+        aiModalClose.addEventListener("click", () =>
+          aiModal.classList.add("hidden")
+        );
+        aiModal.addEventListener("click", (e) => {
+          if (e.target === aiModal) {
+            aiModal.classList.add("hidden");
+          }
+        });
+        memberFilterDropdown.addEventListener("change", (e) => {
+          selectedMemberFilter = e.target.value;
+          renderAll();
+        });
+
+        const handleDateChange = () => {
+          // Parse Persian date string and convert to Gregorian
+          startDateFilterValue = toGregorian(startDateInput.value);
+          if (endDateInput.value) {
+            let d = toGregorian(endDateInput.value);
+            if (d) d.setHours(23, 59, 59, 999);
+            endDateFilterValue = d;
+          } else {
+            endDateFilterValue = null;
+          }
+          if (startDateInput.value && endDateInput.value) {
+            if (startDateFilterValue > endDateFilterValue) return;
+            currentFilter = "custom";
+            filterButtons.forEach((btn) =>
+              btn.classList.remove("active-filter")
+            );
+            renderAll();
+          }
+        };
+
+        // حذف رویدادهای قبلی چون تقویم شمسی خودش رویداد دارد
+        // startDateInput.addEventListener('change', handleDateChange);
+        // endDateInput.addEventListener('change', handleDateChange);
+        // هنگام تغییر مقدار ورودی‌ها از طریق datepicker یا تایپ دستی، مقدارها را پردازش کن
+        startDateInput.addEventListener("change", handleDateChange);
+        endDateInput.addEventListener("change", handleDateChange);
+
+        filterButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            currentFilter = button.dataset.period;
+            startDateInput.value = "";
+            endDateInput.value = "";
+            startDateFilterValue = null;
+            endDateFilterValue = null;
+            filterButtons.forEach((btn) =>
+              btn.classList.remove("active-filter")
+            );
+            button.classList.add("active-filter");
+            renderAll();
+          });
+        });
+
+        // دکمه جدید برای فیلتر بازه تاریخ
+        document
+          .getElementById("filter-by-date-btn")
+          .addEventListener("click", () => {
+            const dateErrorEl = document.getElementById("date-error");
+            dateErrorEl.classList.add("hidden");
+            // مقداردهی و تبدیل تاریخ شمسی به میلادی
+            const startDate =
+              startDateInput.value && startDateInput.value.trim();
+            const endDate = endDateInput.value && endDateInput.value.trim();
+            if (!startDate || !endDate) {
+              dateErrorEl.textContent = "لطفاً هر دو تاریخ را انتخاب کنید.";
+              dateErrorEl.classList.remove("hidden");
+              return;
+            }
+            const start = toGregorian(startDate);
+            let end = toGregorian(endDate);
+            if (end) end.setHours(23, 59, 59, 999);
+            if (!start || !end) {
+              dateErrorEl.textContent =
+                "فرمت تاریخ معتبر نیست. از قالب YYYY/MM/DD استفاده کنید.";
+              dateErrorEl.classList.remove("hidden");
+              return;
+            }
+            if (start.getTime() > end.getTime()) {
+              dateErrorEl.textContent =
+                "تاریخ شروع نباید بعد از تاریخ پایان باشد.";
+              dateErrorEl.classList.remove("hidden");
+              return;
+            }
+            startDateFilterValue = start;
+            endDateFilterValue = end;
+            currentFilter = "custom";
+            filterButtons.forEach((btn) =>
+              btn.classList.remove("active-filter")
+            );
+            renderAll();
+          });
+
+        // INITIAL APP RENDER
+        buildThemeSelector();
+        loadTheme();
+        renderAll();
+        filterButtons[0].classList.add("active-filter");
+      });
+    </script>
+  </body>
+</html>
